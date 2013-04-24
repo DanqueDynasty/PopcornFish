@@ -136,8 +136,18 @@ public class Play extends BasicGameState {
                        Fish.get(fish).setBeacon(bX.nextInt(512), bY.nextInt(768/2));
                        Fish.get(fish).roamBehaviour(Fish.get(fish).beaconX, Fish.get(fish).beaconY, gc);
                        Random r1 = new Random();
-                       int r = r1.nextInt(4);
-                       Fish.get(fish).setType(r);
+                       if(egg1_Unlocked == true)
+                       {
+                           Fish.get(fish).setType(1);
+                       }else if(egg2_Unlocked == true)
+                       {
+                           Fish.get(fish).setType(2);
+                       }else if(egg3_Unlocked == true)
+                       {
+                           Fish.get(fish).setType(3);
+                       }else{
+                           Fish.get(fish).setType(0);
+                       }
                    }
                    
                    for(int z = 0; z < Food.size(); z++)
@@ -255,8 +265,6 @@ public class Play extends BasicGameState {
                         default:
                             break; 
                     }
-                    
-                    g.draw(Fish.get(i).getPolygon());
                 }
             }
             if(inventoryScreen == true){
