@@ -251,6 +251,26 @@ public class FishEntity implements Entity{
        }
     }
     
+    public void setLifeStage(int stage)
+    {
+        lifeStage = stage;
+    }
+    
+    public int getLifeStage()
+    {
+        return lifeStage;
+    }
+    
+    public void setType(int t)
+    {
+        type = t;
+    }
+    
+    public int getType()
+    {
+        return type;
+    }
+    
     public Image img;
     public float posX;
     public float posY;
@@ -263,4 +283,6 @@ public class FishEntity implements Entity{
     public int behaviour;
     boolean isHere;
     public Polygon poly;
+    public int lifeStage;
+    public int type;
 }

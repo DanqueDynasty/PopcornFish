@@ -50,6 +50,19 @@ public class Play extends BasicGameState {
       
       Food = new ArrayList<>();
       Fish = new ArrayList<>();
+      
+      egg_default = new Image("res/egg_type0.png");
+      egg_Type1 = egg_default;
+      egg_Type2 = egg_default;
+      egg_Type3 = egg_default;
+      
+      egg1_Unlocked = false;
+      egg2_Unlocked = false;
+      egg3_Unlocked = false;
+      
+      egg_TypeImg1 = new Image("res/egg_type1.png");
+      egg_TypeImg2 = new Image("res/egg_type2.png");
+      egg_TypeImg3 = new Image("res/egg_type3.png");
     }
     
     @Override
@@ -122,6 +135,9 @@ public class Play extends BasicGameState {
                        Random bY = new Random();
                        Fish.get(fish).setBeacon(bX.nextInt(512), bY.nextInt(768/2));
                        Fish.get(fish).roamBehaviour(Fish.get(fish).beaconX, Fish.get(fish).beaconY, gc);
+                       Random r1 = new Random();
+                       int r = r1.nextInt(4);
+                       Fish.get(fish).setType(r);
                    }
                    
                    for(int z = 0; z < Food.size(); z++)
@@ -130,13 +146,15 @@ public class Play extends BasicGameState {
                        {
                            if(food_isPresent)
                            {
+                            if(z<Food.size()){
                                Fish.get(a).searchForFood(Food.get(z));
                                if(Fish.get(a).getPolygon().intersects(Food.get(z).getPolygon()))
                                {
                                    Food.remove(z);
                                }
-                           }else{
+                            }else{
                                food_isPresent = false;
+                            }
                            }
                        }  
                    }
@@ -146,6 +164,50 @@ public class Play extends BasicGameState {
                {
                    inventoryScreen =! inventoryScreen;
                }
+               if(inventoryScreen == true)
+               {
+                   gc.setPaused(true);
+               }else{
+                   gc.setPaused(false);
+               }
+               
+               if(input.isKeyPressed(Input.KEY_1))
+               {
+                   egg1_Unlocked =! egg1_Unlocked;
+               }
+               
+               if(input.isKeyPressed(Input.KEY_2))
+               {
+                   egg2_Unlocked =! egg2_Unlocked;
+               }
+               
+               if(input.isKeyPressed(Input.KEY_3))
+               {
+                   egg3_Unlocked =! egg3_Unlocked;
+               }
+               
+               //inventory code here
+               if(egg1_Unlocked == true)
+               {
+                   egg_Type1 = egg_TypeImg1;
+               }else{
+                   egg_Type1 = egg_default;
+               }
+               
+               if(egg2_Unlocked == true)
+               {
+                   egg_Type2 = egg_TypeImg2;
+               }else{
+                   egg_Type2 = egg_default;
+               }
+               
+               if(egg3_Unlocked == true)
+               {
+                   egg_Type3 = egg_TypeImg3;
+               }else{
+                   egg_Type3 = egg_default;
+               }
+               
             }
             gc.setPaused(true);
         }
@@ -171,14 +233,37 @@ public class Play extends BasicGameState {
                 for(int i = 0; i < Food.size(); i++)
                 {
                     g.setDrawMode(Graphics.MODE_NORMAL);
-                    g.setColor(Color.red);
+                    g.setColor(Color.pink);
                     g.draw(Food.get(i).poly);
                 }
                 
                 for(int i = 0; i < Fish.size(); i++)
                 {
+                    switch(Fish.get(i).getType()){
+                        case 1:
+                            g.setColor(Color.red);
+                            g.draw(Fish.get(i).getPolygon());
+                            break;
+                        case 2:
+                            g.setColor(Color.green);
+                            g.draw(Fish.get(i).getPolygon());
+                            break;
+                        case 3:
+                            g.setColor(Color.blue);
+                            g.draw(Fish.get(i).getPolygon());
+                            break;
+                        default:
+                            break; 
+                    }
+                    
                     g.draw(Fish.get(i).getPolygon());
                 }
+            }
+            if(inventoryScreen == true){
+            //render inventory code here
+                g.drawImage(egg_Type1, 128, 384);
+                g.drawImage(egg_Type2, 202, 384);
+                g.drawImage(egg_Type3, 276, 384);
             }
         }
     }
@@ -195,6 +280,9 @@ public class Play extends BasicGameState {
     boolean gameOver;
     boolean inventoryScreen;
     boolean food_isPresent;
+    boolean egg1_Unlocked;
+    boolean egg2_Unlocked;
+    boolean egg3_Unlocked;
     Image menuBar;
     Image menuBtn;
     Image menuBtn_Def;
@@ -206,4 +294,11 @@ public class Play extends BasicGameState {
     ArrayList<FoodEntity> Food;
     ArrayList<FishEntity> Fish;
     boolean tool_Food;
+    Image egg_Type1;
+    Image egg_Type2;
+    Image egg_Type3;
+    Image egg_default;
+    Image egg_TypeImg1;
+    Image egg_TypeImg2;
+    Image egg_TypeImg3;
 }
