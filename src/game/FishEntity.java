@@ -9,6 +9,7 @@ import java.util.Random;
 import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Animation;
 
 /**
  *
@@ -136,26 +137,26 @@ public class FishEntity implements Entity{
         return false;
     }
     
-    public void searchForFood(FoodEntity other)
+    public void searchForFood(FoodEntity other, int delta)
     {
         if(other.getX() >= this.getX())
         {
-            posX++;
+            posX+= 1 * delta;
             this.poly.setX(posX);
         }
         if(other.getX() <= this.getX())
         {
-            posX--;
+            posX-= 1 * delta;
             this.poly.setX(posX);
         }
         if(other.getY() >= this.getY())
         {
-            posY++;
+            posY+= 1 * delta;
             this.poly.setY(posY);
         }
         if(other.getY() <= this.getY())
         {
-            posY--;
+            posY-= 1 * delta;
             this.poly.setY(posY);
         }
     }
@@ -227,7 +228,6 @@ public class FishEntity implements Entity{
     
     public void roamBehaviour(int bx, int by, GameContainer gc)
     {
-       if(bx <= gc.getWidth() && by <= gc.getHeight()){
         if((float)bx >= posX)
         {
             posX++;
@@ -248,7 +248,6 @@ public class FishEntity implements Entity{
             posY++;
             poly.setY(posY);
         }
-       }
     }
     
     public void setLifeStage(int stage)
@@ -261,6 +260,17 @@ public class FishEntity implements Entity{
         return lifeStage;
     }
     
+    public void handStage(int st)
+    {
+        st = this.getLifeStage();
+        switch(st)
+        {
+            
+            default:
+                break;
+        }
+    }
+    
     public void setType(int t)
     {
         type = t;
@@ -270,6 +280,35 @@ public class FishEntity implements Entity{
     {
         return type;
     }
+    
+    public void handleType(int t)//will handle what type of species
+    {
+        t = this.getType();
+        switch(t)
+        {
+            case 1:
+                spritesheet = sprite_Type1;
+                break;
+            case 2:
+                spritesheet = sprite_Type2;
+                break;
+            case 3:
+                spritesheet = sprite_Type3;
+            default: 
+                break;
+        }
+    }
+    
+    public void initSpriteSheet()
+    {
+        
+    }
+    
+    public void initAnimation()
+    {
+        anim = new Animation();
+    }
+    
     
     public Image img;
     public float posX;
@@ -285,4 +324,9 @@ public class FishEntity implements Entity{
     public Polygon poly;
     public int lifeStage;
     public int type;
+    public Animation anim;
+    public SpriteSheet spritesheet;
+    public SpriteSheet sprite_Type1;
+    public SpriteSheet sprite_Type2;
+    public SpriteSheet sprite_Type3;
 }

@@ -24,7 +24,7 @@ public MainGame(String name)
 {
     super(name);
     this.addState(new MainMenu(MENU_LEVEL));
-    this.addState(new Play(PLAY_LEVEL));
+    this.addState(new Game(PLAY_LEVEL));
 }
 
   @Override
