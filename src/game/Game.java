@@ -35,7 +35,6 @@ public class Game extends BasicGameState {
         InitGUIRes();
         initOrgnaism();
         initFood();
-        initInventoryScreen();
         isPause = false;
         isGameOver = false;
         isInventory = false;
@@ -52,27 +51,18 @@ public class Game extends BasicGameState {
         {
             if(isPause == false)
             {
-                if(isInventory == false)
+              //gameplay elements(GUI/ Char/ Etc)
+                updateGui(gc, sbg, delta);
+                handleSpawn(gc);
+                updateOrganism(gc, delta);
+                updateFood(gc, delta);
+                handleBehaviour(gc, delta);    
+                System.out.println(currentTool);
+                if(gc.getInput().isMousePressed(Input.MOUSE_RIGHT_BUTTON))
                 {
-                    //gameplay elements(GUI/ Char/ Etc)
-                    updateGui(gc, sbg, delta);
-                    handleSpawn(gc);
-                    updateOrganism(gc, delta);
-                    updateFood(gc, delta);
-                    handleBehaviour(gc, delta);    
-                    System.out.println(currentTool);
-                    if(gc.getInput().isMousePressed(Input.MOUSE_RIGHT_BUTTON))
-                    {
-                        currentTool = 0;
-                    }
-                }else if(isInventory == true)
-                {
-                    updateInventoryScreen();
+                   currentTool = 0;
                 }
-                if(gc.getInput().isKeyPressed(Input.KEY_SPACE))
-                {
-                    isInventory =! isInventory;
-                }
+
             }
         }
     }
@@ -84,16 +74,10 @@ public class Game extends BasicGameState {
         {
             if(isPause == false)
             {
-                if(isInventory == false)
-                {
-                    //Render code for gameplay elements goes here
-                    renderGui(g);
-                    renderOrganism(g);
-                    renderFood(g);
-                }else if(isInventory == true)
-                {
-                    renderInventoryScreen(g);
-                }
+            //Render code for gameplay elements goes here
+                renderGui(g);
+                renderOrganism(g);
+                renderFood(g);
             }
         }
     }
@@ -139,26 +123,16 @@ public class Game extends BasicGameState {
                 }
             }else{
                 menuBtn = menuBtn_def;
-            }
-            updateFoodToolButton(gc);
+            }      
     }
     
-    private void updateFoodToolButton(GameContainer gc)
-    {
-        Input input = gc.getInput();
-        if(input.getMouseX() <= 992 && input.getMouseX() >= 960 && Mouse.getY() <= 768 && Mouse.getY() >= 746)
-            {
-                foodTool_Active = true;
-            }
-    }
     
     public void renderGui(Graphics g)
     {
         g.drawImage(background, 0, 0);
         g.drawImage(menuBar, 0, 0);
         g.drawImage(menuBtn, 0, 0);
-        g.drawImage(foodTool, 960, 0);
-        g.drawImage(trashTool, 992, 0);
+        
     }
     
     public void initOrgnaism()
@@ -245,35 +219,7 @@ public class Game extends BasicGameState {
             g.draw(food.get(fl).getPolygon());
         }
     }
-    
-    public void initInventoryScreen()
-    {
-        try{
-            egg_def = new Image("res/egg_type0.png");
-            egg_Type1 = egg_def;
-            egg_Type2 = egg_def;
-            egg_Type3 = egg_def;
-            egg_Type1_Img = new Image("res/egg_type1.png");
-            egg_Type2_Img = new Image("res/egg_type2.png");
-            egg_Type3_Img = new Image("res/egg_type3.png");
-            fishType1_invImg = new Image("res/fish1_preview.png");
-        }catch(SlickException e)
-        {
-            e.printStackTrace();
-        }
-    }
-    
-    public void updateInventoryScreen()
-    {
-        //handle update code
-    }
-    
-    public void renderInventoryScreen(Graphics g)
-    {
-        g.drawImage(egg_Type1, 256, 128);
-        g.drawImage(egg_Type2, 330, 128);
-        g.drawImage(egg_Type3, 404, 128);
-    }
+ 
     
     public void handleSpawn(GameContainer gc){
         Input input = gc.getInput();
