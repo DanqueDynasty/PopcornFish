@@ -23,8 +23,8 @@ import org.newdawn.slick.Color;
  * Meant to replace the existing play class which was buggy beyond compare
  * 
  */
-public class Game extends BasicGameState {
-    public Game(int id)
+public class Play extends BasicGameState {
+    public Play(int id)
     {
     
     }
@@ -41,7 +41,6 @@ public class Game extends BasicGameState {
         isInventory = false;
         foodIsPresent = false;
         currency = 25;
-        foodTool_Active = false;
     }
     
     @Override
@@ -60,7 +59,6 @@ public class Game extends BasicGameState {
                     updateOrganism(gc, delta);
                     updateFood(gc, delta);
                     handleBehaviour(gc, delta);    
-                    System.out.println(currentTool);
                     if(gc.getInput().isMousePressed(Input.MOUSE_RIGHT_BUTTON))
                     {
                         currentTool = 0;
@@ -140,16 +138,15 @@ public class Game extends BasicGameState {
             }else{
                 menuBtn = menuBtn_def;
             }
-            updateFoodToolButton(gc);
-    }
-    
-    private void updateFoodToolButton(GameContainer gc)
-    {
-        Input input = gc.getInput();
-        if(input.getMouseX() <= 992 && input.getMouseX() >= 960 && Mouse.getY() <= 768 && Mouse.getY() >= 746)
+            
+            if(input.getMouseX() <= 992 && input.getMouseX() >= 960 && input.getMouseY() >= 0 && input.getMouseY() <= 32)
             {
-                foodTool_Active = true;
-            }
+                System.out.println("Mouse in Bounds");
+                if(Mouse.isButtonDown(Input.MOUSE_LEFT_BUTTON))
+                {
+                    currentTool = 1;
+                }
+            } 
     }
     
     public void renderGui(Graphics g)
@@ -187,6 +184,7 @@ public class Game extends BasicGameState {
             if(foodIsPresent == false)
             {
                 //roam code
+                
                 gen.get(f).roamBehaviour(gc, delta);
             }else if(foodIsPresent == true)
             {
@@ -281,7 +279,7 @@ public class Game extends BasicGameState {
         {
             gen.add(new FishEntity(input.getMouseX(), input.getMouseY(), 64, 64));
         }
-        if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON) && foodTool_Active == true)
+        if(input.isMousePressed(0) && currentTool == 1)
         {
             food.add(new FoodEntity(input.getMouseX(), input.getMouseY(), 32, 32));
             System.out.println("Food Added");
@@ -289,7 +287,6 @@ public class Game extends BasicGameState {
     }
     
     private int currentTool;
-    private boolean foodTool_Active;
     private boolean isPause;
     private boolean isGameOver;
     private boolean isInventory;

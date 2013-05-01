@@ -18,22 +18,25 @@ import org.newdawn.slick.Animation;
 public class FishEntity implements Entity{
     public FishEntity(float x, float y, float h, float w)
     {
-
+    	setupPolygon(x,y,h,w);
         setX(x);
         setY(y);
         setHOffset(h);
         setWOffset(w); 
-
+        setSpeed(.1f);
+        setBeacon();
     }
 
     @Override
     public void setX(float x) {
         posX = x;
+        poly.setX(posX);
     }
 
     @Override
     public void setY(float y) {
         posY = y;
+        poly.setY(posY);
     }
 
     @Override
@@ -141,22 +144,22 @@ public class FishEntity implements Entity{
     {
         if(other.getX() >= this.getX())
         {
-            posX+= 1 * delta;
+            posX+= getSpeed() * delta;
             this.poly.setX(posX);
         }
         if(other.getX() <= this.getX())
         {
-            posX-= 1 * delta;
+            posX-=  getSpeed() * delta;
             this.poly.setX(posX);
         }
         if(other.getY() >= this.getY())
         {
-            posY+= 1 * delta;
+            posY+=  getSpeed() * delta;
             this.poly.setY(posY);
         }
         if(other.getY() <= this.getY())
         {
-            posY-= 1 * delta;
+            posY-=  getSpeed() * delta;
             this.poly.setY(posY);
         }
     }
@@ -225,29 +228,46 @@ public class FishEntity implements Entity{
     {
         return beaconY;
     }
-    
-    public void roamBehaviour(int bx, int by, GameContainer gc)
+    public void setSpeed(float f){
+    	this.speed = f;
+    }
+    public float getSpeed(){
+    	return speed;
+    }
+    public void roamBehaviour(GameContainer gc, int delta)
     {
+    	int bx = beaconX;
+    	int by = beaconY;
         if((float)bx >= posX)
         {
-            posX++;
-            poly.setX(posX);
+            setX(getX()+getSpeed()*delta);
         }
         if((float)bx <= posX)
         {
-            posX--;
-            poly.setX(posX);
+            setX(getX()-getSpeed()*delta);
         }
         if((float)by >= posY)
         {
-            posY--;
-            poly.setY(posY);
+            setY(getY()+getSpeed()*delta);
         }
         if((float)by <= posY)
         {
-            posY++;
-            poly.setY(posY);
+            setY(getY()-getSpeed()*delta);
         }
+        if(bx>posX&&bx<posX+10){
+        	if(by>posY&&by<posY+10){
+        		setBeacon();
+        	}else if(by<posY&&by>posY-10){
+        		setBeacon();
+        	}
+        }else if(bx<posX&&bx>posX-10){
+        	if(by>posY&&by<posY+10){
+        		setBeacon();
+        	}else if(by<posY&&by>posY-10){
+        		setBeacon();
+        	}
+        }
+        
     }
     
     public void setLifeStage(int stage)
@@ -287,7 +307,20 @@ public class FishEntity implements Entity{
         switch(t)
         {
             case 1:
-                spritesheet = sprite_Type1;
+                //handle species type 1
+                if(this.getHealth() <= 25)
+                {
+                    spritesheet = sprite_Type1;
+                }else if(this.getHealth() <= 50)
+                {
+                    //stage 2 obesity
+                }else if(this.getHealth() <= 75)
+                {
+                    //stage 3 obesity
+                }else if(this.getHealth() == 100)
+                {
+                    //explosion 
+                }
                 break;
             case 2:
                 spritesheet = sprite_Type2;
@@ -329,4 +362,5 @@ public class FishEntity implements Entity{
     public SpriteSheet sprite_Type1;
     public SpriteSheet sprite_Type2;
     public SpriteSheet sprite_Type3;
+    private float speed;
 }
