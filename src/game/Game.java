@@ -98,8 +98,8 @@ public class Game extends BasicGameState {
         
         menuBtn = menuBtn_def;
         
-        foodTool = new Image("res/menuBtn_foodTool.png");
-        trashTool = new Image("res/menuBtn_trashTool.png");
+        //foodTool = new Image("res/menuBtn_foodTool.png");
+        //trashTool = new Image("res/menuBtn_trashTool.png");
         background = new Image("res/backDrop_RAW.png");
         currentTool = 0;
         
@@ -129,6 +129,7 @@ public class Game extends BasicGameState {
     
     public void renderGui(Graphics g)
     {
+        g.setDrawMode(Graphics.MODE_NORMAL);
         g.drawImage(background, 0, 0);
         g.drawImage(menuBar, 0, 0);
         g.drawImage(menuBtn, 0, 0);

@@ -321,9 +321,23 @@ public class FishEntity implements Entity{
                 {
                     //explosion 
                 }
+                if(this.getMutation() == 1)
+                {
+                    //change spritesheet into a mutated fish
+                }
                 break;
             case 2:
-                spritesheet = sprite_Type2;
+                if(this.getHealth() <= 25)
+                {
+                    spritesheet = sprite_Type2;
+                }else if(this.getHealth() <= 50){
+                    
+                }else if(this.getHealth() <= 75){
+                
+                }else if(this.getHealth() == 100)
+                {
+                    //xPlosion
+                }
                 break;
             case 3:
                 spritesheet = sprite_Type3;
@@ -342,6 +356,16 @@ public class FishEntity implements Entity{
         anim = new Animation();
     }
     
+    public void setMutation(int m)
+    {
+        mutation = m;
+    }
+    
+    public int getMutation()
+    {
+        return mutation;
+    }
+    
     
     public Image img;
     public float posX;
@@ -353,6 +377,7 @@ public class FishEntity implements Entity{
     public int dir;
     public int health;
     public int behaviour;
+    public int mutation;
     boolean isHere;
     public Polygon poly;
     public int lifeStage;

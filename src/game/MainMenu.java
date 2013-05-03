@@ -15,6 +15,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.Image;
 
 public class MainMenu extends BasicGameState{
     public MainMenu(int id)
@@ -25,7 +26,11 @@ public class MainMenu extends BasicGameState{
     @Override
     public void init(GameContainer gc, StateBasedGame sbg)throws SlickException
     {
-        
+        titleCard = new Image("res/titleCard.png");
+        playBtn = new Image("res/playBtn.png");
+        helpBtn = new Image("res/helpBtn.png");
+        creditBtn = new Image("res/creditBtn.png");
+        quitButton = new Image("res/quitBtn.png");
     }
     
     @Override
@@ -40,7 +45,7 @@ public class MainMenu extends BasicGameState{
     @Override
     public void render(GameContainer gc, StateBasedGame sbg, Graphics g)throws SlickException
     {
-    
+        
     }
     
     @Override
@@ -49,4 +54,9 @@ public class MainMenu extends BasicGameState{
         return 0;
     }
     Input input;
+    Image titleCard;
+    Image playBtn;
+    Image helpBtn;
+    Image creditBtn;
+    Image quitButton;
 }
