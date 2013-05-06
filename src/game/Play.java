@@ -45,6 +45,10 @@ public class Play extends BasicGameState {
         isSpecies1Get = true;
         isSpecies2Get = false;
         isSpecies3Get = false;
+        for(int i = 0; i < specie1.size(); i++)
+        {
+            specie1.get(i).initRes();
+        }
     }
     
     @Override
@@ -278,6 +282,7 @@ public class Play extends BasicGameState {
                                         specie1.get(i).getHOffset());
             specie1.get(i).setHealth(25);
             specie1.get(3).setMutation(1);
+            specie1.get(i).handleType(1);
             if(foodIsPresent == false)
             {
                 specie1.get(i).roamBehaviour(gc, delta);
@@ -290,8 +295,8 @@ public class Play extends BasicGameState {
                         if(specie1.get(i).getPolygon().intersects(food.get(f).poly))
                         {
                             food.remove(f);
-                            //int h = specie1.get(i).getHealth();
-                            //specie1.get(i).setHealth(h + 10);
+                            int h = specie1.get(i).getHealth();
+                            specie1.get(i).setHealth(h + 10);
                         }
                     }
                 }

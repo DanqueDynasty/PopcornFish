@@ -17,7 +17,7 @@ import org.newdawn.slick.state.StateBasedGame;
 
 public class MainGame extends StateBasedGame {
 
-public static final String GAME_NAME = "PopcornFish";
+public static final String GAME_NAME = "PopcornFish --- dev --- BETTA RELEASE";
 public static final int MENU_LEVEL = 0;
 public static final int PLAY_LEVEL = 1;
 public MainGame(String name)

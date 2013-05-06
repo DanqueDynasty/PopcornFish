@@ -10,6 +10,7 @@ import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Animation;
+import org.newdawn.slick.SlickException;
 
 /**
  *
@@ -144,11 +145,13 @@ public class FishEntity implements Entity{
     {
         if(other.getX() >= this.getX())
         {
+            setLDirection();
             posX+= getSpeed() * delta;
             this.poly.setX(posX);
         }
         if(other.getX() <= this.getX())
         {
+            setRDirection();
             posX-=  getSpeed() * delta;
             this.poly.setX(posX);
         }
@@ -163,19 +166,6 @@ public class FishEntity implements Entity{
             this.poly.setY(posY);
         }
     }
-    
-    public void setSubImage(int d)
-    {
-        d = this.dir;
-        if(d == 0)
-        {
-
-        }else if(d == 1)
-        {
-            
-        }
-    }
-   
 
     @Override
     public void setIsPresent(boolean p) {
@@ -240,10 +230,12 @@ public class FishEntity implements Entity{
     	int by = beaconY;
         if((float)bx >= posX)
         {
+            setLDirection();
             setX(getX()+getSpeed()*delta);
         }
         if((float)bx <= posX)
         {
+            setRDirection();
             setX(getX()-getSpeed()*delta);
         }
         if((float)by >= posY)
@@ -269,28 +261,6 @@ public class FishEntity implements Entity{
         }
         
     }
-    
-    public void setLifeStage(int stage)
-    {
-        lifeStage = stage;
-    }
-    
-    public int getLifeStage()
-    {
-        return lifeStage;
-    }
-    
-    public void handStage(int st)
-    {
-        st = this.getLifeStage();
-        switch(st)
-        {
-            
-            default:
-                break;
-        }
-    }
-    
     public void setType(int t)
     {
         type = t;
@@ -299,6 +269,16 @@ public class FishEntity implements Entity{
     public int getType()
     {
         return type;
+    }
+    
+    public void initRes(){
+        try{
+            specie_1_stage1 = new Image("res/fish_type1_stage1Sprite.png");
+            specieImage = specie_1_stage1;
+        }catch(SlickException e)
+        {
+            e.printStackTrace();
+        }
     }
     
     public void handleType(int t)//will handle what type of species
@@ -310,7 +290,7 @@ public class FishEntity implements Entity{
                 //handle species type 1
                 if(this.getHealth() <= 25)
                 {
-                    spritesheet = sprite_Type1;
+                    
                 }else if(this.getHealth() <= 50)
                 {
                     //stage 2 obesity
@@ -329,7 +309,7 @@ public class FishEntity implements Entity{
             case 2:
                 if(this.getHealth() <= 25)
                 {
-                    spritesheet = sprite_Type2;
+                    
                 }else if(this.getHealth() <= 50){
                     
                 }else if(this.getHealth() <= 75){
@@ -340,7 +320,7 @@ public class FishEntity implements Entity{
                 }
                 break;
             case 3:
-                spritesheet = sprite_Type3;
+                
             default: 
                 break;
         }
@@ -348,12 +328,37 @@ public class FishEntity implements Entity{
     
     public void initSpriteSheet()
     {
-        
+        try{
+            spec1_stage1 = new SpriteSheet("res/fish_type1_stage1Sprite.png", 128, 64);
+            time = 0;
+            timeOfLastFrameChange = 0;
+            currentFrame = 0;
+            specie_1_stage1 = spec1_stage1.getSprite(currentFrame, 0);
+            totalFrame = 4;
+        }catch(SlickException e)
+        {
+            e.printStackTrace();
+        }
     }
     
-    public void initAnimation()
+    public void updateSpriteSheet(int delta)
     {
-        anim = new Animation();
+        time+=(float)delta/1000;
+        if(time>timeOfLastFrameChange + 0.1f)
+        {
+            timeOfLastFrameChange = time;
+            nextFrame();
+        }
+    }
+    
+    public void nextFrame()
+    {
+        currentFrame++;
+        if(currentFrame>totalFrame-1)
+        {
+            currentFrame = 0;
+        }
+        specie_1_stage1 = spec1_stage1.getSprite(currentFrame, 0);
     }
     
     public void setMutation(int m)
@@ -366,11 +371,39 @@ public class FishEntity implements Entity{
         return mutation;
     }
     
+    public void setLDirection()
+    {
+        if(dir_RIGHT == true)
+        {
+            dir_RIGHT = false;
+        }
+        dir_LEFT = true;
+    }
+    public void setRDirection()
+    {
+        if(dir_LEFT == true)
+        {
+            dir_LEFT = false;
+        }
+        dir_RIGHT = true;
+    }
+    
+    public boolean getLDir()
+    {
+        return dir_LEFT;
+    }
+    
+    public boolean getRDir()
+    {
+        return dir_RIGHT;
+    }
     
     public Image img;
     public float posX;
     public float posY;
     public int beaconX, beaconY;
+    public float time;
+    public float timeOfLastFrameChange;
     public float hOffset;
     public float wOffset;
     public int damage;
@@ -383,9 +416,20 @@ public class FishEntity implements Entity{
     public int lifeStage;
     public int type;
     public Animation anim;
-    public SpriteSheet spritesheet;
-    public SpriteSheet sprite_Type1;
-    public SpriteSheet sprite_Type2;
-    public SpriteSheet sprite_Type3;
+    public Image specieImage;
+    public Image specie_1_stage1;
+    public Image specie_1_stage_2;
+    public Image specie_1_stage_3;
+    public Image specie_2;
+    public Image specie_3;
+    public boolean DirLeft;
+    public boolean DirRight;
     private float speed;
+    public SpriteSheet spec1_stage1;
+    public SpriteSheet spec1_stage2;
+    public int currentFrame;
+    public int totalFrame;
+    public boolean dir_LEFT;
+    public boolean dir_RIGHT;
+    
 }
