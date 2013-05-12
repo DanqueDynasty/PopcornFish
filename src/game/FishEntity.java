@@ -281,19 +281,25 @@ public class FishEntity implements Entity{
         }
     }
     
-    public void handleType(int t)//will handle what type of species
+    public void handleType(int t, int delta)//will handle what type of species
     {
         t = this.getType();
+        initSpecieSprite();
         switch(t)
         {
             case 1:
                 //handle species type 1
                 if(this.getHealth() <= 25)
                 {
-                    
+                    masterSprite = spec1_stage1;
+                    initSpriteSheet(masterSprite, 0);
+                    updateSpriteSheet(delta);
+                   
                 }else if(this.getHealth() <= 50)
                 {
-                    //stage 2 obesity
+                    masterSprite = spec1_stage2;
+                    initSpriteSheet(masterSprite, 0);
+                    updateSpriteSheet(delta);
                 }else if(this.getHealth() <= 75)
                 {
                     //stage 3 obesity
@@ -303,20 +309,41 @@ public class FishEntity implements Entity{
                 }
                 if(this.getMutation() == 1)
                 {
-                    //change spritesheet into a mutated fish
+                    int timeB4Trans = 100;
+                    for(int i = timeB4Trans; i > 0; i--)
+                    {
+                        masterSprite = spec1_stage1;
+                        initSpriteSheet(masterSprite, 0);
+                        updateSpriteSheet(delta);
+                    }if(timeB4Trans == 0)
+                    {
+                        masterSprite = monster_type1;
+                        initSpriteSheet(masterSprite, 0);
+                        updateSpriteSheet(delta);
+                    }
                 }
                 break;
             case 2:
                 if(this.getHealth() <= 25)
                 {
-                    
+                    masterSprite = spec2_stage1;
+                    initSpriteSheet(masterSprite, 0);
+                    updateSpriteSheet(delta);
                 }else if(this.getHealth() <= 50){
-                    
+                    masterSprite = spec2_stage2;
+                    initSpriteSheet(masterSprite, 0);
+                    updateSpriteSheet(delta);
                 }else if(this.getHealth() <= 75){
-                
+                    masterSprite = spec2_stage3;
+                    initSpriteSheet(masterSprite, 0);
+                    updateSpriteSheet(delta);
                 }else if(this.getHealth() == 100)
                 {
                     //xPlosion
+                }
+                if(this.getMutation() == 1)
+                {
+                    //change 
                 }
                 break;
             case 3:
@@ -326,19 +353,15 @@ public class FishEntity implements Entity{
         }
     }
     
-    public void initSpriteSheet()
+    public void initSpriteSheet(SpriteSheet sprite, int offset)
     {
-        try{
-            spec1_stage1 = new SpriteSheet("res/fish_type1_stage1Sprite.png", 128, 64);
+
+            masterSprite = sprite;
             time = 0;
             timeOfLastFrameChange = 0;
             currentFrame = 0;
-            specie_1_stage1 = spec1_stage1.getSprite(currentFrame, 0);
+            masterImage = masterSprite.getSprite(currentFrame, 0);
             totalFrame = 4;
-        }catch(SlickException e)
-        {
-            e.printStackTrace();
-        }
     }
     
     public void updateSpriteSheet(int delta)
@@ -358,7 +381,44 @@ public class FishEntity implements Entity{
         {
             currentFrame = 0;
         }
-        specie_1_stage1 = spec1_stage1.getSprite(currentFrame, 0);
+        masterImage = masterSprite.getSprite(currentFrame, 0);
+    }
+    
+    public SpriteSheet getMasterSprite()
+    {
+        return masterSprite;
+    }
+    
+    public Image getMasterImage()
+    {
+        return masterImage;
+    }
+    
+    public void initSpecieSprite()
+    {
+        try{
+            spec1_stage1 = new SpriteSheet("res/fish_type1_stage1Sprite.png",
+                    128, 64);
+            spec1_stage2 = new SpriteSheet("res/fish_type1_stage2Sprite.png",
+                    128, 64);
+            spec2_stage1 = new SpriteSheet("res/fish_type2_stage1Sprite.png",
+                    128, 64);
+            spec2_stage2 = new SpriteSheet("res/fish_type2_stage2Sprite.png",
+                    128, 64);
+            spec2_stage3 = new SpriteSheet("res/fish_type2_stage3Sprite.png",
+                                            128, 64);
+            spec3_stage1 = new SpriteSheet("res/fish_type3_stage3Sprite.png",
+                                            128, 64);
+            spec3_stage2 = new SpriteSheet("res/fish_type3_stage3Sprite.png",
+                                            128, 64);
+            spec3_stage3 = new SpriteSheet("res/fish_type3_stage3Sprite.png",
+                                            128, 64);
+            monster_type1 = new SpriteSheet("res/fish_typeM_M1.png", 128, 64);
+            monster_type2 = new SpriteSheet("res/fish_typeM_M2.png", 128, 64);
+        }catch(SlickException e)
+        {
+            e.printStackTrace();
+        }
     }
     
     public void setMutation(int m)
@@ -425,11 +485,21 @@ public class FishEntity implements Entity{
     public boolean DirLeft;
     public boolean DirRight;
     private float speed;
+    //sprites
     public SpriteSheet spec1_stage1;
     public SpriteSheet spec1_stage2;
+    public SpriteSheet spec2_stage1;
+    public SpriteSheet spec2_stage2;
+    public SpriteSheet spec2_stage3;
+    public SpriteSheet spec3_stage1;
+    public SpriteSheet spec3_stage2;
+    public SpriteSheet spec3_stage3;
+    public SpriteSheet monster_type1;
+    public SpriteSheet monster_type2;
     public int currentFrame;
     public int totalFrame;
     public boolean dir_LEFT;
     public boolean dir_RIGHT;
-    
+    public SpriteSheet masterSprite;
+    public Image masterImage;
 }

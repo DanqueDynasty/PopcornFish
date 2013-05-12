@@ -282,7 +282,7 @@ public class Play extends BasicGameState {
                                         specie1.get(i).getHOffset());
             specie1.get(i).setHealth(25);
             specie1.get(3).setMutation(1);
-            specie1.get(i).handleType(1);
+            specie1.get(i).handleType(1, delta);
             if(foodIsPresent == false)
             {
                 specie1.get(i).roamBehaviour(gc, delta);
@@ -315,6 +315,9 @@ public class Play extends BasicGameState {
                 g.setColor(Color.cyan);
                 g.draw(specie1.get(i).getPolygon());
             }
+            g.drawImage(specie1.get(i).getMasterImage(), 
+                        specie1.get(i).getX(), 
+                        specie1.get(i).getY());
         }
     }
     
@@ -439,9 +442,27 @@ public class Play extends BasicGameState {
                 {
                     for(int i = 0; i < 4; i++)
                     {
-                        specie1.add(new FishEntity(input.getMouseX(), input.getMouseY(), 64, 64));
+                        specie1.add(new FishEntity(input.getMouseX(), input.getMouseY(), 64, 128));
                     }
                 }
+            }
+        }
+        if(currentTool == 4)
+        {
+            if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON))
+            {
+                for(int i = 0; i < 3; i++)
+                {
+                    specie2.add(new FishEntity(input.getMouseX(), input.getMouseY(), 64, 128));
+                }
+            }
+        }
+        
+        if(currentTool == 5)
+        {
+            if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON))
+            {
+                specie3.add(new FishEntity(input.getMouseX(), input.getMouseY(), 64, 128));
             }
         }
     }
