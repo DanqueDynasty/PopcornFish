@@ -26,6 +26,12 @@ public class FishEntity implements Entity{
         setWOffset(w); 
         setSpeed(.1f);
         setBeacon();
+        setHealth(25);
+
+        initSpecieSprite();
+        time = 0;
+        timeOfLastFrameChange = 0;
+        currentFrame = 0;
     }
 
     @Override
@@ -63,18 +69,8 @@ public class FishEntity implements Entity{
     @Override
     public void setDir(int dir) {
         this.dir = dir;
-        if(dir == 0)
-        {
-            //TODO go left
-        }else if(dir == 1)
-        {
-            //TODO go Right
-        }else if(dir == 2)
-        {
-            
-        }
     }
-
+    
     @Override
     public void setBehaviour(int b) {
        behaviour = b;
@@ -145,13 +141,13 @@ public class FishEntity implements Entity{
     {
         if(other.getX() >= this.getX())
         {
-            setLDirection();
+            setDir(1);
             posX+= getSpeed() * delta;
             this.poly.setX(posX);
         }
         if(other.getX() <= this.getX())
         {
-            setRDirection();
+            setDir(0);
             posX-=  getSpeed() * delta;
             this.poly.setX(posX);
         }
@@ -230,12 +226,12 @@ public class FishEntity implements Entity{
     	int by = beaconY;
         if((float)bx >= posX)
         {
-            setLDirection();
+            setDir(1);
             setX(getX()+getSpeed()*delta);
         }
         if((float)bx <= posX)
         {
-            setRDirection();
+            setDir(0);
             setX(getX()-getSpeed()*delta);
         }
         if((float)by >= posY)
@@ -284,22 +280,28 @@ public class FishEntity implements Entity{
     public void handleType(int t, int delta)//will handle what type of species
     {
         t = this.getType();
-        initSpecieSprite();
+        //System.out.println(getHealth());
         switch(t)
         {
             case 1:
                 //handle species type 1
                 if(this.getHealth() <= 25)
                 {
-                    masterSprite = spec1_stage1;
-                    initSpriteSheet(masterSprite, 0);
-                    updateSpriteSheet(delta);
-                   
+                    if(getDir() == 0)
+                    {
+                        setOffset(0);
+                        masterSprite = spec1_stage1;
+                        initSpriteSheet(masterSprite);
+                    }else if(getDir() == 1)
+                    {
+                        setOffset(1);
+                        masterSprite = spec1_stage1;
+                        initSpriteSheet(masterSprite);
+                    }
                 }else if(this.getHealth() <= 50)
                 {
                     masterSprite = spec1_stage2;
-                    initSpriteSheet(masterSprite, 0);
-                    updateSpriteSheet(delta);
+                    initSpriteSheet(masterSprite);
                 }else if(this.getHealth() <= 75)
                 {
                     //stage 3 obesity
@@ -307,60 +309,89 @@ public class FishEntity implements Entity{
                 {
                     //explosion 
                 }
-                if(this.getMutation() == 1)
-                {
-                    int timeB4Trans = 100;
-                    for(int i = timeB4Trans; i > 0; i--)
-                    {
-                        masterSprite = spec1_stage1;
-                        initSpriteSheet(masterSprite, 0);
-                        updateSpriteSheet(delta);
-                    }if(timeB4Trans == 0)
-                    {
-                        masterSprite = monster_type1;
-                        initSpriteSheet(masterSprite, 0);
-                        updateSpriteSheet(delta);
-                    }
-                }
                 break;
             case 2:
                 if(this.getHealth() <= 25)
                 {
                     masterSprite = spec2_stage1;
-                    initSpriteSheet(masterSprite, 0);
-                    updateSpriteSheet(delta);
+                    initSpriteSheet(masterSprite);
                 }else if(this.getHealth() <= 50){
                     masterSprite = spec2_stage2;
-                    initSpriteSheet(masterSprite, 0);
-                    updateSpriteSheet(delta);
+                    initSpriteSheet(masterSprite);
                 }else if(this.getHealth() <= 75){
                     masterSprite = spec2_stage3;
-                    initSpriteSheet(masterSprite, 0);
-                    updateSpriteSheet(delta);
+                    initSpriteSheet(masterSprite);
                 }else if(this.getHealth() == 100)
                 {
                     //xPlosion
                 }
                 if(this.getMutation() == 1)
                 {
-                    //change 
+                    for(int i = 1000; i > 0; i--)
+                    {
+                        masterSprite = spec2_stage1;
+                        initSpriteSheet(masterSprite);
+                        System.out.println("countDown: " + i);
+                        if(i == 0)
+                        {
+                            setType(5);
+                        }
+                    }
                 }
                 break;
             case 3:
-                
+                if(this.getHealth() <= 25)
+                {
+                    masterSprite = spec3_stage1;
+                    initSpriteSheet(masterSprite);
+                }else if(this.getHealth() <= 50)
+                {
+                    masterSprite = spec3_stage2;
+                    initSpriteSheet(masterSprite);
+                }else if(this.getHealth() <= 75)
+                {
+                    masterSprite = spec3_stage3;
+                    initSpriteSheet(masterSprite);
+                }else if(this.getHealth() == 100)
+                {
+                    //explosion
+                }
+                break;
+            case 4:
+                    masterSprite = spec1_stage1;
+                    initSpriteSheet(masterSprite);
+                    int TimeB4Trans = 6000;
+                    for(int i  = TimeB4Trans; i > -1; i--)
+                    {
+                        i--;
+                        //System.out.println(i);
+                        if(i == 0)
+                        {
+                            System.out.println("Zero Acheived");
+                        }
+                    }
+                break;
+            case 5:
+                masterSprite = monster_type2;
+                initSpriteSheet(masterSprite);
+                break;
             default: 
                 break;
         }
+
+        updateSpriteSheet(delta);
     }
     
-    public void initSpriteSheet(SpriteSheet sprite, int offset)
+    public int getDir()
     {
-
+        return dir;
+    }
+    
+    public void initSpriteSheet(SpriteSheet sprite)
+    {
+            int d = getDir();
             masterSprite = sprite;
-            time = 0;
-            timeOfLastFrameChange = 0;
-            currentFrame = 0;
-            masterImage = masterSprite.getSprite(currentFrame, 0);
+            masterImage = masterSprite.getSprite(currentFrame, d);
             totalFrame = 4;
     }
     
@@ -381,8 +412,9 @@ public class FishEntity implements Entity{
         {
             currentFrame = 0;
         }
-        masterImage = masterSprite.getSprite(currentFrame, 0);
-    }
+        int d = getDir();
+        masterImage = masterSprite.getSprite(currentFrame, d);
+    }  
     
     public SpriteSheet getMasterSprite()
     {
@@ -392,6 +424,16 @@ public class FishEntity implements Entity{
     public Image getMasterImage()
     {
         return masterImage;
+    }
+    
+    public void setOffset(int o)
+    {
+        Offset = o;
+    }
+    
+    public int getOffset()
+    {
+        return Offset;
     }
     
     public void initSpecieSprite()
@@ -502,4 +544,5 @@ public class FishEntity implements Entity{
     public boolean dir_RIGHT;
     public SpriteSheet masterSprite;
     public Image masterImage;
+    public int Offset;
 }

@@ -45,9 +45,14 @@ public class Play extends BasicGameState {
         isSpecies1Get = true;
         isSpecies2Get = false;
         isSpecies3Get = false;
+        currency = 25;
         for(int i = 0; i < specie1.size(); i++)
         {
             specie1.get(i).initRes();
+        }
+        for(int i = 0; i < specie2.size(); i++)
+        {
+            specie2.get(i).initRes();
         }
     }
     
@@ -68,12 +73,14 @@ public class Play extends BasicGameState {
                     updateFood(gc, delta);
                     handleBehaviour(gc, delta); 
                     Spec1Behaviour(gc, delta);
+                    Spec2Behaviour(gc, delta);
+                    Spec3Behaviour(gc, delta);
                     updateStatus();
                     if(gc.getInput().isMousePressed(Input.MOUSE_RIGHT_BUTTON))
                     {
                         currentTool = 0;
                     }
-                    System.out.println("Current Tool = " + currentTool);
+               //     System.out.println("Current Tool = " + currentTool);
                     
                     if(food.size() == 0)
                     {
@@ -98,6 +105,8 @@ public class Play extends BasicGameState {
                     renderOrganism(g);
                     renderFood(g);
                     renderSpec1(g);
+                    renderSpec2(g);
+                    renderSpec3(g);
                 }else if(isInventory == true)
                 {
                     renderInventoryScreen(g);
@@ -171,6 +180,15 @@ public class Play extends BasicGameState {
             if(input.isKeyPressed(Input.KEY_3) || input.isKeyPressed(Input.KEY_NUMPAD3))
             {
                 currentTool = 3;
+            }
+            
+            if(input.isKeyPressed(Input.KEY_4) || input.isKeyPressed(Input.KEY_NUMPAD4))
+            {
+                currentTool = 4;
+            }
+            if(input.isKeyPressed(Input.KEY_5) || input.isKeyDown(Input.KEY_NUMPAD5))
+            {
+                currentTool = 5;
             }
             
             //GUI speaking
@@ -280,8 +298,12 @@ public class Play extends BasicGameState {
                                         specie1.get(i).getY(), 
                                         specie1.get(i).getWOffset(),
                                         specie1.get(i).getHOffset());
-            specie1.get(i).setHealth(25);
-            specie1.get(3).setMutation(1);
+     //       specie1.get(i).setHealth(25);
+            for(int j = 0; j < specie1.size(); j+= 3)
+            {
+                specie1.get(j).setType(4);
+                //System.out.println("Mustation for " + j + "Is true" );
+            }
             specie1.get(i).handleType(1, delta);
             if(foodIsPresent == false)
             {
@@ -295,8 +317,70 @@ public class Play extends BasicGameState {
                         if(specie1.get(i).getPolygon().intersects(food.get(f).poly))
                         {
                             food.remove(f);
-                            int h = specie1.get(i).getHealth();
-                            specie1.get(i).setHealth(h + 10);
+                         //   int h = specie1.get(i).getHealth();
+                            specie1.get(i).setHealth(specie1.get(i).getHealth() + 10);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    public void Spec2Behaviour(GameContainer gc, int delta)
+    {
+        for(int i = 0; i < specie2.size(); i++)
+        {
+            specie2.get(i).setType(2);
+            specie2.get(i).setupPolygon(specie2.get(i).getX(),
+                                        specie2.get(i).getY(),
+                                        specie2.get(i).getWOffset(),
+                                        specie2.get(i).getHOffset());
+            specie2.get(i).handleType(2, delta);
+            if(foodIsPresent == false)
+            {
+                specie2.get(i).roamBehaviour(gc, delta);
+            }else if(foodIsPresent == true)
+            {
+                for(int f = 0; f < food.size(); f++)
+                {
+                    if(f < specie2.size())
+                    {
+                        specie2.get(i).searchForFood(food.get(f), delta);
+                        if(specie2.get(i).getPolygon().intersects(food.get(f).getPolygon()))
+                        {
+                            food.remove(f);
+                            specie2.get(i).setHealth(specie2.get(i).getHealth() + 10);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    public void Spec3Behaviour(GameContainer gc, int delta)
+    {
+        for(int i = 0; i < specie3.size(); i++)
+        {
+            specie3.get(i).setType(3);
+            specie3.get(i).setupPolygon(specie3.get(i).getX(),
+                                        specie3.get(i).getY(),
+                                        specie3.get(i).getWOffset(),
+                                        specie3.get(i).getHOffset());
+            specie3.get(i).handleType(3, delta);
+            if(foodIsPresent == false)
+            {
+                specie3.get(i).roamBehaviour(gc, delta);
+            }else if(foodIsPresent == true)
+            {
+                for(int f = 0; f < food.size(); f++)
+                {
+                    if(f < specie3.size())
+                    {
+                        specie3.get(i).searchForFood(food.get(f), delta);
+                        if(specie3.get(i).getPolygon().intersects(food.get(f).getPolygon()))
+                        {
+                            food.remove(f);
+                            specie3.get(i).setHealth(specie3.get(i).getHealth() + 10);
                         }
                     }
                 }
@@ -308,6 +392,7 @@ public class Play extends BasicGameState {
     {
         for(int i = 0; i < specie1.size(); i++)
         {
+            /*
             g.setColor(Color.red);
             g.draw(specie1.get(i).getPolygon());
             if(specie1.get(i).getMutation() == 1)
@@ -315,9 +400,30 @@ public class Play extends BasicGameState {
                 g.setColor(Color.cyan);
                 g.draw(specie1.get(i).getPolygon());
             }
+            */
             g.drawImage(specie1.get(i).getMasterImage(), 
                         specie1.get(i).getX(), 
                         specie1.get(i).getY());
+        }
+    }
+   
+    public void renderSpec2(Graphics g)
+    {
+        for(int i = 0; i < specie2.size(); i++)
+        {
+            g.drawImage(specie2.get(i).getMasterImage(), 
+                        specie2.get(i).getX(), 
+                        specie2.get(i).getY());
+        }
+    }
+    
+    public void renderSpec3(Graphics g)
+    {
+        for(int i = 0; i < specie3.size(); i++)
+        {
+            g.drawImage(specie3.get(i).getMasterImage(),
+                        specie3.get(i).getX(), 
+                        specie3.get(i).getY());
         }
     }
     
@@ -333,6 +439,12 @@ public class Play extends BasicGameState {
     public void initFood()
     {
         food = new ArrayList();
+        try{
+            foodImg = new Image("res/food.png");
+        }catch(SlickException e)
+        {
+            e.printStackTrace();
+        }
     }
     
     public void updateFood(GameContainer gc, int delta)
@@ -354,10 +466,19 @@ public class Play extends BasicGameState {
     
     public void renderFood(Graphics g)
     {
+        /*
         for(int fl = 0; fl < food.size(); fl++)
         {
             g.setColor(Color.yellow);
             g.draw(food.get(fl).getPolygon());
+        }
+        */
+        for(int f = 0; f < food.size(); f++)
+        {
+            food.get(f).setImage(foodImg);
+            g.drawImage(food.get(f).getImage(), 
+                    food.get(f).getX(), 
+                    food.get(f).getY());
         }
     }
     
@@ -415,17 +536,21 @@ public class Play extends BasicGameState {
     }
     
     public void handleSpawn(GameContainer gc){
+        
         Input input = gc.getInput();
+        /*
         if(currentTool == 0)
         {
             if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON))
             {
-                for(int i = 0; i < 4; i++)
+                for(int i = 0; i < 1; i++)
                 {
                     gen.add(new FishEntity(input.getMouseX(), input.getMouseY(), 64, 64));
                 }
             }
         }  
+        */
+
         if(currentTool == 1)
         {
             if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON))
@@ -434,13 +559,14 @@ public class Play extends BasicGameState {
                 foodIsPresent = true;
             }
         }
+
         if(currentTool == 3)
         {
             if(isSpecies1Get == true)
             {
                 if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON))
                 {
-                    for(int i = 0; i < 4; i++)
+                    for(int i = 0; i < 1; i++)
                     {
                         specie1.add(new FishEntity(input.getMouseX(), input.getMouseY(), 64, 128));
                     }
@@ -451,7 +577,7 @@ public class Play extends BasicGameState {
         {
             if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON))
             {
-                for(int i = 0; i < 3; i++)
+                for(int i = 0; i < 1; i++)
                 {
                     specie2.add(new FishEntity(input.getMouseX(), input.getMouseY(), 64, 128));
                 }
@@ -475,6 +601,7 @@ public class Play extends BasicGameState {
     private boolean isSpecies1Get;
     private boolean isSpecies2Get;
     private boolean isSpecies3Get;
+    String errMon;
     String status;
     Image egg_def;
     Image egg_Type1;
@@ -491,6 +618,7 @@ public class Play extends BasicGameState {
     Image trashTool;
     Image background;
     Image fishType1_invImg;
+    Image foodImg;
     ArrayList<FishEntity> gen;
     ArrayList<FoodEntity> food;
     ArrayList<FishEntity> specie1;
