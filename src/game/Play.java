@@ -12,6 +12,9 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.Image;
+import java.util.TimerTask;
+import java.util.Timer;
+import org.newdawn.slick.Sound;
 
 import java.util.ArrayList;
 import org.lwjgl.input.Mouse;
@@ -37,15 +40,18 @@ public class Play extends BasicGameState {
         initOrgnaism();
         initFood();
         initInventoryScreen();
+        initCoin();
+        initSound();
         isPause = false;
         isGameOver = false;
         isInventory = false;
         foodIsPresent = false;
-        currency = 25;
         isSpecies1Get = true;
         isSpecies2Get = false;
         isSpecies3Get = false;
-        currency = 25;
+        currency = 1000;
+        ctime = 0;
+        timeSinceLastChange = 0;
         for(int i = 0; i < specie1.size(); i++)
         {
             specie1.get(i).initRes();
@@ -75,7 +81,9 @@ public class Play extends BasicGameState {
                     Spec1Behaviour(gc, delta);
                     Spec2Behaviour(gc, delta);
                     Spec3Behaviour(gc, delta);
+                    coinUpdate(gc);
                     updateStatus();
+                    playSound();
                     if(gc.getInput().isMousePressed(Input.MOUSE_RIGHT_BUTTON))
                     {
                         currentTool = 0;
@@ -107,6 +115,7 @@ public class Play extends BasicGameState {
                     renderSpec1(g);
                     renderSpec2(g);
                     renderSpec3(g);
+                    renderCoin(g);
                 }else if(isInventory == true)
                 {
                     renderInventoryScreen(g);
@@ -235,9 +244,14 @@ public class Play extends BasicGameState {
         g.drawImage(egg_Type2, 960, 192);
         g.drawImage(egg_Type3, 960, 256);
         
-        g.setColor(Color.green);
+        g.setColor(Color.blue);
         g.drawString("ToolBar:", 0, 730);
-        g.drawString(status, 128, 730);
+        g.setColor(Color.white);
+        g.drawString(status, 96, 730);
+        g.setColor(Color.blue);
+        g.drawString("Currency:", 336, 730);
+        g.setColor(Color.white);
+        g.drawString(String.valueOf(currency) , 416, 730);
     }
     
     public void initOrgnaism()
@@ -299,15 +313,30 @@ public class Play extends BasicGameState {
                                         specie1.get(i).getWOffset(),
                                         specie1.get(i).getHOffset());
      //       specie1.get(i).setHealth(25);
+            //regarding Time
+            ctime +=(float)(delta)/1000;
+            if(ctime > timeSinceLastChange + 3)
+            {
+                coin.add(new CoinEntity(specie1.get(i).getX(),
+                                        specie1.get(i).getY(),
+                                        64, 64));
+                if(coin.size() != 0)
+                {
+                    ctime = 0;
+                }
+            }
+            //regarding mutation
             for(int j = 0; j < specie1.size(); j+= 3)
             {
-                specie1.get(j).setType(4);
+                specie1.get(j).setType(1);
+                //specie1.get(j).setMutation(true);
                 //System.out.println("Mustation for " + j + "Is true" );
             }
             specie1.get(i).handleType(1, delta);
             if(foodIsPresent == false)
             {
                 specie1.get(i).roamBehaviour(gc, delta);
+                
             }else if(foodIsPresent == true)
             {
                 for(int f = 0; f < food.size(); f++)
@@ -370,6 +399,20 @@ public class Play extends BasicGameState {
             if(foodIsPresent == false)
             {
                 specie3.get(i).roamBehaviour(gc, delta);
+                /*
+                Timer t = new Timer();
+                TimerTask spawnCoin = new TimerTask() {
+                    @Override
+                    public void run() {
+                        for(int i = 0; i < specie3.size(); i++)
+                        coin.add(new CoinEntity(specie3.get(i).getX(),
+                                                specie3.get(i).getY(),
+                                                64, 64));
+                    }
+                };
+                t.schedule(spawnCoin, 0, 60000);
+                * 
+                */
             }else if(foodIsPresent == true)
             {
                 for(int f = 0; f < food.size(); f++)
@@ -566,9 +609,14 @@ public class Play extends BasicGameState {
             {
                 if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON))
                 {
-                    for(int i = 0; i < 1; i++)
-                    {
-                        specie1.add(new FishEntity(input.getMouseX(), input.getMouseY(), 64, 128));
+                    if(currency >= 25){
+                        for(int i = 0; i < 1; i++)
+                        {
+                            specie1.add(new FishEntity(input.getMouseX(), input.getMouseY(), 64, 128));
+                            currency -= 25;
+                        }
+                    }else{
+                        
                     }
                 }
             }
@@ -577,9 +625,13 @@ public class Play extends BasicGameState {
         {
             if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON))
             {
+                if(currency >= 50){
                 for(int i = 0; i < 1; i++)
-                {
-                    specie2.add(new FishEntity(input.getMouseX(), input.getMouseY(), 64, 128));
+                    {
+                        specie2.add(new FishEntity(input.getMouseX(), input.getMouseY(), 64, 128));
+                    }
+                }else{
+                    //print error
                 }
             }
         }
@@ -588,9 +640,59 @@ public class Play extends BasicGameState {
         {
             if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON))
             {
-                specie3.add(new FishEntity(input.getMouseX(), input.getMouseY(), 64, 128));
+                if(currency >= 75){
+                    specie3.add(new FishEntity(input.getMouseX(), input.getMouseY(), 64, 128));
+                }
             }
         }
+    }
+    
+    public void initCoin()
+    {
+        coin = new ArrayList<>();
+    }
+    
+    public void coinUpdate(GameContainer gc)
+    {
+        for(int i = 0; i < coin.size(); i++)
+        {
+            coin.get(i).setupPolygon(coin.get(i).getX(), 
+                                     coin.get(i).getY(),
+                                     coin.get(i).getWOffset(),
+                                     coin.get(i).getHOffset());
+            coin.get(i).setDir(1);
+            try{
+                coin.get(i).setImage(new Image("res/coin.png"));
+            }catch(SlickException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    public void renderCoin(Graphics g)
+    {
+        for(int i = 0; i < coin.size(); i++)
+        {
+            g.drawImage(coin.get(i).getImage(),
+                        coin.get(i).getX(),
+                        coin.get(i).getY());
+        }
+    }
+    
+    public void initSound()
+    {
+        try{
+            bgMusic = new Sound("res/Mining by Moonlight.ogg");
+            //bgMusic.play();
+        }catch(SlickException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void playSound(){
+        //bgMusic.play(5, 50);
     }
     
     private int currentTool;
@@ -624,5 +726,10 @@ public class Play extends BasicGameState {
     ArrayList<FishEntity> specie1;
     ArrayList<FishEntity> specie2;
     ArrayList<FishEntity> specie3;
+    ArrayList<CoinEntity> coin;
+    Sound bgMusic;
     private int currency;
+    private float ctime;
+    private float timeSinceLastChange;
+    
 }

@@ -17,6 +17,7 @@ public class FoodEntity implements Entity{
     public int damage, health, behaviour, direction, val;
     public Image sprite;
     public boolean isHere;
+    
     public Polygon poly;
     
     public FoodEntity(float x, float y, float h, float w)

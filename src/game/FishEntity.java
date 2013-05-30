@@ -11,6 +11,7 @@ import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.SlickException;
+import java.util.Timer;
 
 /**
  *
@@ -27,12 +28,14 @@ public class FishEntity implements Entity{
         setSpeed(.1f);
         setBeacon();
         setHealth(25);
-
+        hasMutated = false;
         initSpecieSprite();
         time = 0;
         timeOfLastFrameChange = 0;
         currentFrame = 0;
-    }
+        ctime = 0;
+        timeSinceLastChange = 0;
+        }
 
     @Override
     public void setX(float x) {
@@ -141,13 +144,26 @@ public class FishEntity implements Entity{
     {
         if(other.getX() >= this.getX())
         {
-            setDir(1);
+            if(hasMutated == false)
+            {
+                setDir(1);
+            }else if(hasMutated == true)
+            {
+                setDir(3);
+            }
             posX+= getSpeed() * delta;
             this.poly.setX(posX);
         }
         if(other.getX() <= this.getX())
         {
-            setDir(0);
+            //setDir(0);
+            if(hasMutated == false)
+            {
+                setDir(0);
+            }else if(hasMutated == true)
+            {
+                setDir(4);
+            }
             posX-=  getSpeed() * delta;
             this.poly.setX(posX);
         }
@@ -226,12 +242,25 @@ public class FishEntity implements Entity{
     	int by = beaconY;
         if((float)bx >= posX)
         {
-            setDir(1);
+            //setDir(1);
+            if(hasMutated == false)
+            {
+                setDir(1);
+            }else if(hasMutated == true)
+            {
+                setDir(3);
+            }
             setX(getX()+getSpeed()*delta);
         }
         if((float)bx <= posX)
         {
-            setDir(0);
+            if(hasMutated == false)
+            {
+                setDir(0);
+            }else if(hasMutated == true)
+            {
+                setDir(4);
+            }
             setX(getX()-getSpeed()*delta);
         }
         if((float)by >= posY)
@@ -280,24 +309,22 @@ public class FishEntity implements Entity{
     public void handleType(int t, int delta)//will handle what type of species
     {
         t = this.getType();
+        if(Mutated = true){
+            ctime += (float)(delta)/1000;
+            if(ctime > timeSinceLastChange + 5)
+            {
+                hasMutated = true;
+            }
+        }
         //System.out.println(getHealth());
         switch(t)
         {
             case 1:
                 //handle species type 1
                 if(this.getHealth() <= 25)
-                {
-                    if(getDir() == 0)
-                    {
-                        setOffset(0);
-                        masterSprite = spec1_stage1;
-                        initSpriteSheet(masterSprite);
-                    }else if(getDir() == 1)
-                    {
-                        setOffset(1);
-                        masterSprite = spec1_stage1;
-                        initSpriteSheet(masterSprite);
-                    }
+                {   
+                    masterSprite = spec1_stage1;
+                    initSpriteSheet(masterSprite);
                 }else if(this.getHealth() <= 50)
                 {
                     masterSprite = spec1_stage2;
@@ -308,6 +335,10 @@ public class FishEntity implements Entity{
                 }else if(this.getHealth() == 100)
                 {
                     //explosion 
+                }
+                if(mutation == 1)
+                {
+                    
                 }
                 break;
             case 2:
@@ -327,16 +358,8 @@ public class FishEntity implements Entity{
                 }
                 if(this.getMutation() == 1)
                 {
-                    for(int i = 1000; i > 0; i--)
-                    {
-                        masterSprite = spec2_stage1;
-                        initSpriteSheet(masterSprite);
-                        System.out.println("countDown: " + i);
-                        if(i == 0)
-                        {
-                            setType(5);
-                        }
-                    }
+                    masterSprite = spec1_stage1;
+                    initSpriteSheet(masterSprite);
                 }
                 break;
             case 3:
@@ -360,20 +383,11 @@ public class FishEntity implements Entity{
             case 4:
                     masterSprite = spec1_stage1;
                     initSpriteSheet(masterSprite);
-                    int TimeB4Trans = 6000;
-                    for(int i  = TimeB4Trans; i > -1; i--)
-                    {
-                        i--;
-                        //System.out.println(i);
-                        if(i == 0)
-                        {
-                            System.out.println("Zero Acheived");
-                        }
-                    }
+                    //ChangeSprite change = new ChangeSprite(monster_type1);
+                    //timer.schedule(change, 6000, 6000);
+                    
                 break;
             case 5:
-                masterSprite = monster_type2;
-                initSpriteSheet(masterSprite);
                 break;
             default: 
                 break;
@@ -500,6 +514,19 @@ public class FishEntity implements Entity{
         return dir_RIGHT;
     }
     
+    public void setMutation(boolean m)
+    {
+        Mutated = m;
+    }
+    
+    public boolean getMutated()
+    {
+        return Mutated;
+    }
+    
+    
+    //methods to handle le timer
+    
     public Image img;
     public float posX;
     public float posY;
@@ -514,6 +541,7 @@ public class FishEntity implements Entity{
     public int behaviour;
     public int mutation;
     boolean isHere;
+    boolean hasMutated;
     public Polygon poly;
     public int lifeStage;
     public int type;
@@ -545,4 +573,7 @@ public class FishEntity implements Entity{
     public SpriteSheet masterSprite;
     public Image masterImage;
     public int Offset;
+    public boolean Mutated;
+    private float ctime;
+    private float timeSinceLastChange;
 }
